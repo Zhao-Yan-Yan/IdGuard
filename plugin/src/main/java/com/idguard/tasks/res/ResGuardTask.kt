@@ -1,4 +1,4 @@
-package com.idguard.tasks
+package com.idguard.tasks.res
 
 import com.idguard.utils.MappingOutputHelper
 import com.idguard.utils.RandomNameHelper
@@ -24,8 +24,10 @@ open class ResGuardTask @Inject constructor(
 
     private val drawableNameMap = mutableMapOf<String, String>()
     private val stringNameMap = mutableMapOf<String, String>()
+    private val colorNameMap = mutableMapOf<String, String>()
 
     private val strRegex = Regex("<(string|string-array) name=\"\\w+\">")
+    private val colorRegex = Regex("<color name=\"\\w+\">")
 
     //哪些扩展名的文件内容需要替换
     private val needReplaceFileExtensionName = listOf(".xml", ".java", ".kt")
@@ -37,6 +39,7 @@ open class ResGuardTask @Inject constructor(
         // FIXME: remove this common
         drawableObfuscate()
         stringObfuscate()
+        colorObfuscate()
         MappingOutputHelper.appendNewLan(project, mappingName, "drawable mapping")
         MappingOutputHelper.write(project, mappingName, drawableNameMap)
         MappingOutputHelper.appendNewLan(project, mappingName, "string mapping")
@@ -127,7 +130,42 @@ open class ResGuardTask @Inject constructor(
             }
         }
     }
+    private fun colorObfuscate() {
+        val needSearchFileTree = project.files(findColorsFiles()).asFileTree
+        val namesSet = mutableSetOf<String>()
+        needSearchFileTree.forEach {
+            namesSet.addAll(findColorsName(it.readText()))
+        }
+        val obfuscateNames = RandomNameHelper.genNames(namesSet.size, Pair(8, 12), allLetter = false)
+        colorNameMap.putAll(namesSet.mapIndexed { index: Int, name: String ->
+            name to obfuscateNames[index]
+        })
+        val needReplaceFiles = findNeedReplaceFiles(
+            "drawable",
+            "values",
+            "layout",
+        )
+        project.rootProject.subprojects {
+            if (!it.isAndroidProject()) {
+                return@subprojects
+            }
+            it.files(needReplaceFiles).asFileTree.forEach { file: File ->
+                if (!needReplaceFileExtensionName.contains(file.getExtensionName())) {
+                    //如果不加这个剔除功能 可能会对某些文件有影响
+                    return@forEach
+                }
+                var text = file.readText()
 
+                colorNameMap.forEach { (raw, obfuscate) ->
+                    text = text
+                        .replaceWords("<color name=\"$raw\">", "<color name=\"$obfuscate\">")
+                        .replaceWords("R.color.$raw", "R.color.$obfuscate")
+                        .replaceWords("@color/$raw", "@color/$obfuscate")
+                }
+                file.writeText(text)
+            }
+        }
+    }
     private fun findNeedSearchFiles(): List<File> {
         val resDirs = mutableListOf<File>()
         project.rootProject.subprojects {
@@ -180,6 +218,26 @@ open class ResGuardTask @Inject constructor(
 
     private fun findStringsName(stringText: String): List<String> {
         val result = strRegex.findAll(stringText)
+        return result.map { it.value.removePrefix("<").removeSuffix(">").split("\"")[1] }.toList()
+    }
+
+    private fun findColorsFiles(): List<File> {
+        val dirs = mutableListOf<File>()
+        project.rootProject.subprojects {
+            if (it.isAndroidProject()) {
+                dirs.addAll(
+                    it.findDirsInRes(
+                        variantName,
+                        "values",
+                    )
+                )
+            }
+        }
+        return dirs.toList()
+    }
+
+    private fun findColorsName(stringText: String): List<String> {
+        val result = colorRegex.findAll(stringText)
         return result.map { it.value.removePrefix("<").removeSuffix(">").split("\"")[1] }.toList()
     }
 }
