@@ -16,11 +16,12 @@ import javax.inject.Inject
  * @author yanz
  * @date 2024/3/20 16:56
  */
-open class DrawableImageResGuardTask @Inject constructor(
+open class DrawableMipmapResGuardTask @Inject constructor(
     private val variantName: String,
 ) : BaseResGuardTask(variantName) {
     private val drawableNameMap = mutableMapOf<String, String>()
     private val needReplaceFileExtensionName = listOf(".xml", ".java", ".kt")
+    private val mappingName = "drawable_mipmap_guard_mapping.text"
 
     @TaskAction
     fun execute() {

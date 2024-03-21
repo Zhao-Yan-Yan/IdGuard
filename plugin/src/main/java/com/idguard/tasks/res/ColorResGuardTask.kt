@@ -22,6 +22,8 @@ open class ColorResGuardTask @Inject constructor(
     private val colorRegex = Regex("<color name=\"\\w+\">")
     private val needReplaceFileExtensionName = listOf(".xml", ".java", ".kt")
 
+    private val mappingName = "color_guard_mapping.text"
+
     @TaskAction
     fun execute() {
         colorObfuscate()
@@ -43,6 +45,7 @@ open class ColorResGuardTask @Inject constructor(
             "drawable",
             "values",
             "layout",
+            "color"
         )
         project.rootProject.subprojects {
             if (!it.isAndroidProject()) {

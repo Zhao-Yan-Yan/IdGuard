@@ -13,7 +13,8 @@
     <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
   </style>
 
-  <style name="TestLayoutSS">
+  <style name="i0yt7u1q">
     <item name="android:layout">@layout/activity_main</item>
   </style>
+
 </resources>

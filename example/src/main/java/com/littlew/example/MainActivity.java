@@ -56,6 +56,9 @@ public class MainActivity extends BaseActivity implements OInterface, OtInterfac
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        int s1 = R.style.AlertDialog_AppCompat;
+        int s2 = R.style.t_u475mr;
+
         fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {

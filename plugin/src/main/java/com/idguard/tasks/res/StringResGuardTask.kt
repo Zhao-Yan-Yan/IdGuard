@@ -21,12 +21,13 @@ open class StringResGuardTask @Inject constructor(
     private val stringNameMap = mutableMapOf<String, String>()
     private val strRegex = Regex("<(string|string-array) name=\"\\w+\">")
     private val needReplaceFileExtensionName = listOf(".xml", ".java", ".kt")
+    private val mappingName = "string_guard_mapping.text"
 
     @TaskAction
     fun execute() {
         stringObfuscate()
         MappingOutputHelper.appendNewLan(project, mappingName, "string mapping")
-        MappingOutputHelper.write(project, mappingName, stringNameMap, append = true)
+        MappingOutputHelper.write(project, mappingName, stringNameMap)
     }
 
     private fun stringObfuscate() {

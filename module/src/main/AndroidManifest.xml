@@ -7,7 +7,7 @@
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/Theme.IdGuard">
+    android:theme="@style/t_u475mr">
     <activity
       android:name=".MainActivity"
       android:exported="true">

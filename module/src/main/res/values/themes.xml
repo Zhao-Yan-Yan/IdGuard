@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!-- Base application theme. -->
-  <style name="Base.Theme.IdGuard" parent="Theme.Material3.DayNight.NoActionBar">
+  <style name="jxv63yr19g" parent="Theme.Material3.DayNight.NoActionBar">
     <!-- Customize your light theme here. -->
     <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
   </style>
 
-  <style name="Theme.IdGuard" parent="Base.Theme.IdGuard" />
+  <style name="t_u475mr" parent="Base.Theme.IdGuard" />
 </resources>

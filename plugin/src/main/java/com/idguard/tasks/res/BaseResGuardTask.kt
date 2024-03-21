@@ -17,11 +17,6 @@ import javax.inject.Inject
 open class BaseResGuardTask @Inject constructor(
     private val variantName: String,
 ) : DefaultTask() {
-
-    companion object {
-        const val mappingName = "res_guard_mapping.text"
-    }
-
     init {
         group = "guard"
     }
