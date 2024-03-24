@@ -4,6 +4,7 @@ import com.idguard.utils.MappingOutputHelper
 import com.idguard.utils.RandomNameHelper
 import com.idguard.utils.findLayoutDirs
 import com.idguard.utils.findLayoutUsagesInRes
+import com.idguard.utils.findPackageName
 import com.idguard.utils.getFileName
 import com.idguard.utils.isAndroidProject
 import com.idguard.utils.javaDirs
@@ -90,11 +91,13 @@ open class LayoutNameGuardTask @Inject constructor(
             val javaFileTree = project.javaDirs(variantName)
             project.files(javaFileTree).asFileTree.forEach { javaFile ->
                 var javaFileText = javaFile.readText()
+
                 layoutROMap.forEach { (raw, obfuscate) ->
                     val rawName = raw.getFileName()
                     val obfuscateName = obfuscate.getFileName()
                     javaFileText =
                         javaFileText.replaceWords("R.layout.$rawName", "R.layout.$obfuscateName")
+                            .replaceBindingWords(rawName, obfuscateName)
                 }
                 javaFile.writeText(javaFileText)
             }
@@ -105,5 +108,20 @@ open class LayoutNameGuardTask @Inject constructor(
         }.toMap()
 
         MappingOutputHelper.write(project, mappingName, readableMap)
+    }
+
+    private fun String.replaceBindingWords(rawName: String, obfuscateName: String): String {
+        val rawBinding = rawName.layoutAsBinding()
+        val obfuscateBinding = obfuscateName.layoutAsBinding()
+        val importBindingRegex = Regex("import\\s+[\\w.]+(databinding|viewbinding).*Binding(;)")
+        return this.replace(importBindingRegex) {
+            it.value.replace(rawBinding, obfuscateBinding)
+        }.replaceWords(rawBinding, obfuscateBinding)
+    }
+
+    private fun String.layoutAsBinding(): String {
+        return split("_").joinToString("") {
+            it.replaceFirstChar { char -> char.titlecase() }
+        }.plus("Binding")
     }
 }
