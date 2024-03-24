@@ -65,6 +65,7 @@ open class IdGuardTask @Inject constructor(
                 var javaText = javaFile.readText()
                 idNameMap.forEach { (raw, obfuscate) ->
                     javaText = javaText.replaceWords("R.id.$raw", "R.id.$obfuscate")
+                        .replaceBindingId(raw, obfuscate)
                 }
                 javaFile.writeText(javaText)
             }
@@ -81,4 +82,24 @@ open class IdGuardTask @Inject constructor(
         val matchResult = regex.findAll(xmlText).toList()
         return matchResult.map { it.value.removeSurrounding("\"").split("/")[1] }.toSet()
     }
+
+    private fun String.replaceBindingId(raw: String, obfuscate: String): String {
+        val rawFormat = raw.idAsBindingFormat()
+        val obfuscateFormat = obfuscate.idAsBindingFormat()
+        return replace(Regex("(Binding|binding).$rawFormat")) {
+            it.value.replace(rawFormat, obfuscateFormat)
+        }
+    }
+
+    private fun String.idAsBindingFormat(): String {
+        val words = split("_")
+        val lowerCamelCase = StringBuilder(words[0])
+        for (i in 1 until words.size) {
+            lowerCamelCase.append(words[i].replaceFirstChar { char ->
+                char.titlecase()
+            })
+        }
+        return lowerCamelCase.toString()
+    }
 }
+
