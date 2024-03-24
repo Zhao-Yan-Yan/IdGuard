@@ -61,6 +61,8 @@ public class MainActivity extends BaseActivity implements OInterface, OtInterfac
 
         fab = findViewById(R.id.fab);
 
+        com.littlew.example.databinding.ActivityMainBinding.inflate(getLayoutInflater());
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
