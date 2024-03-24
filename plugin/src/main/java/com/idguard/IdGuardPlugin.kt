@@ -11,7 +11,6 @@ import com.idguard.tasks.res.ColorResGuardTask
 import com.idguard.tasks.res.DrawableMipmapResGuardTask
 import com.idguard.tasks.res.ResGuardTask
 import com.idguard.tasks.res.StringResGuardTask
-import com.idguard.tasks.res.StyleResGuardTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -35,7 +34,6 @@ class IdGuardPlugin : Plugin<Project> {
                 it.tasks.create("DrawableMipmapResGuard$vName", DrawableMipmapResGuardTask::class.java, vName)
                 it.tasks.create("StringResGuard$vName", StringResGuardTask::class.java, vName)
                 it.tasks.create("AnimResGuard$vName", AnimResGuardTask::class.java, vName)
-                // it.tasks.create("StyleResGuard$vName", StyleResGuardTask::class.java, vName)
 
                 it.tasks.register(
                     "ClassGuard$vName",
