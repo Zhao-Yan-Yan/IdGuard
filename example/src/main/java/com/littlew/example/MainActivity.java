@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.littlew.example.base.BaseActivity;
+import com.littlew.example.databinding.ActivityMainBinding;
 import com.littlew.example.pa.DataA;
 import com.littlew.example.pa.E;
 import com.littlew.example.pb.ObTest;
@@ -61,7 +62,16 @@ public class MainActivity extends BaseActivity implements OInterface, OtInterfac
 
         fab = findViewById(R.id.fab);
 
-        com.littlew.example.databinding.ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = com.littlew.example.databinding.ActivityMainBinding.inflate(getLayoutInflater());
+
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textview.setText("Hello Android");
+            }
+        });
+
+        binding.getRoot();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

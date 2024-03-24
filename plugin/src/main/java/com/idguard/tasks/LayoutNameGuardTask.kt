@@ -114,7 +114,7 @@ open class LayoutNameGuardTask @Inject constructor(
     private fun String.replaceBindingWords(packageName: String, rawName: String, obfuscateName: String): String {
         val rawBinding = rawName.layoutAsBinding()
         val obfuscateBinding = obfuscateName.layoutAsBinding()
-        val importBindingRegex = Regex("import $packageName.(databinding|viewbinding).*Binding(;)")
+        val importBindingRegex = Regex("import $packageName.(databinding|viewbinding).*Binding")
         return this.replace(importBindingRegex) {
             it.value.replace(rawBinding, obfuscateBinding)
         }.replaceWords(rawBinding, obfuscateBinding)
