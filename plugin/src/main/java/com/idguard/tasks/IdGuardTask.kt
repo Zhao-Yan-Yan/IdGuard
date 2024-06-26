@@ -5,6 +5,7 @@ import com.idguard.utils.RandomNameHelper
 import com.idguard.utils.findLayoutDirs
 import com.idguard.utils.isAndroidProject
 import com.idguard.utils.javaDirs
+import com.idguard.utils.replaceStartWithDot
 import com.idguard.utils.replaceWords
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -80,14 +81,22 @@ open class IdGuardTask @Inject constructor(
     private fun findXMLIds(file: File): Set<String> {
         val xmlText = file.readText()
         val matchResult = regex.findAll(xmlText).toList()
-        return matchResult.map { it.value.removeSurrounding("\"").split("/")[1] }.toSet()
+        return matchResult.map {
+            it.value.removeSurrounding("\"").split("/")[1]
+        }.filter {
+            it != "root"
+        }.toSet()
     }
 
     private fun String.replaceBindingId(raw: String, obfuscate: String): String {
+        if (raw == "root") {
+            return this
+        }
         val rawFormat = raw.idAsBindingFormat()
         val obfuscateFormat = obfuscate.idAsBindingFormat()
-        return replace(Regex("(Binding|binding).$rawFormat")) {
-            it.value.replace(rawFormat, obfuscateFormat)
+        val regex = Regex("(Binding|binding)(\\?|)\\.\\b$rawFormat\\b")
+        return replace(regex) {
+            it.value.replaceStartWithDot(rawFormat, obfuscateFormat)
         }
     }
 

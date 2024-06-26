@@ -45,7 +45,8 @@ open class ColorResGuardTask @Inject constructor(
             "drawable",
             "values",
             "layout",
-            "color"
+            "color",
+            "mipmap"
         )
         project.rootProject.subprojects {
             if (!it.isAndroidProject()) {

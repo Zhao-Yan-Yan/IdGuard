@@ -47,6 +47,7 @@ open class DrawableMipmapResGuardTask @Inject constructor(
             "mipmap",
             "values",
             "layout",
+            "menu"
         )
         project.rootProject.subprojects {
             if (!it.isAndroidProject()) {
